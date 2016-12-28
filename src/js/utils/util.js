@@ -621,61 +621,11 @@ var util = {
         }
     },
 
-    animateCountTo: function(el, to, _duration) {
-        var ANIM_SPEED = 25; // Lower faster
-        var JITTER = .3;
-        var duration = _duration == null ? 750 : _duration;
-        var from = parseInt(el.text());
-        if (from == null || isNaN(from)) from = 0;
-        if (from != to) {
-            var valueNow = from;
-            var distance = to - valueNow;
-            var aveStep = distance / (duration / ANIM_SPEED);
-            var intid = window.setInterval(function() {
-                valueNow += parseInt((aveStep * ((1-JITTER) + (Math.random() * JITTER * 2))));
-                console.log(valueNow);
-                if ((aveStep > 0 && valueNow >= to) || (aveStep < 0 && valueNow <= to)) {
-                    valueNow = to;
-                    window.clearInterval(intid);
-                }
-                el.text(valueNow);
-            }, ANIM_SPEED);
-        } else {
-            el.text(to);
-        }
-    },
-
     simpleAjaxGet: function(url, target_id) {
         $.getJSON(url, {}, function(data) {
             var res = "<pre>"+JSON.stringify(data, undefined, 2)+"</pre>";
             $("#"+target_id).html(res).fadeIn();
         });
-    },
-
-    animateCountTo: function(el, to, _duration) {
-        var ANIM_SPEED = 25; // Lower faster
-        var MIN_STEP = 1;
-        var JITTER = .3;
-        var duration = _duration == null ? 750 : _duration;
-        var from = parseInt(el.text());
-        if (from == null || isNaN(from)) from = 0;
-        if (from != to) {
-            var valueNow = from;
-            var distance = to - valueNow;
-            var aveStep = distance / (duration / ANIM_SPEED);
-            var intid = window.setInterval(function() {
-                var step = parseInt((aveStep * ((1-JITTER) + (Math.random() * JITTER * 2))));
-                if (step < MIN_STEP) step = aveStep > 0 ? MIN_STEP : -1* MIN_STEP;
-                valueNow += step;
-                if ((aveStep > 0 && valueNow >= to) || (aveStep < 0 && valueNow <= to)) {
-                    valueNow = to;
-                    window.clearInterval(intid);
-                }
-                el.text(valueNow);
-            }, ANIM_SPEED);
-        } else {
-            el.text(to);
-        }
     },
 
     stdSN: function(raw) {

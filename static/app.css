@@ -63,74 +63,26 @@ body {
     text-align: right;
 }
 
-.feedMessage {
-    padding: 10px;
-    border: 1px solid rgba(0,0,0,0.0);
-    -webkit-border-radius:3px;
-    -moz-border-radius:3px;
-    border-radius: 3px;
-}
-
-.feedMessage a, .feedMessage a:hover, .feedMessage a:visited {
-    text-decoration: none;
-}
-
-.feedMessage h2, .feedMessage a > h2 {
-    color: gray;
-    transition: 1s all;
-    text-decoration: none;
-}
-
-.feedMessage a:hover > h2 {
-    color: #0689ff;
-    text-decoration: none;
-}
-
-
-.feed .feedMessage:hover {
-    border: 1px solid #EFEFEF;
-}
-
-.feedMessage .details, .transcription .details {
-    font-size: 0.75em;
-    color: rgba(0,0,0,0.7);
-}
-
-.feedMessage .details > span, .transcription .details > span {
-    margin-right: 8px;
-}
-
-.transcription {
-    background: white;
-    border: 1px solid #DDD;
-    -webkit-border-radius:3px;
-    -moz-border-radius:3px;
-    border-radius: 3px;
-    padding: 10px;
-    margin-bottom: 4px;
-}
-
-.transcription .text {
-    font-family: monospace;
-}
-
 .map {
     min-height: 250px;
     margin: 10px 0;
 }
 
+/* Text styles */
 
-.feed-cta {
-    z-index: 100;
-    position: fixed;
-    right: 0px;
-    bottom: 30px;
-    width: 300px;
-    background: white;
-    padding: 12px;
-    border-top: 1px solid #DDD;
-    border-left: 1px solid #DDD;
-    border-bottom: 1px solid #DDD;
+.editable {
+    cursor: pointer;
+}
+
+.editable:hover {
+    opacity: 0.7;
+}
+
+.center-upper {
+    text-align: center;
+    text-transform: uppercase;
+    color: gray;
+    font-size: 11px;
 }
 
 /* Major Layout */
@@ -198,12 +150,11 @@ header.topBar {
     background: rgba(0,0,0,0.2);
 }
 
-/* Splash */
-
-#splash {
-}
-
 /* Decision */
+
+.top_proposal {
+    margin-top: 15px;
+}
 
 .proposal {
     margin: 10px 0px;

@@ -19,27 +19,30 @@ export default class Voter extends React.Component {
         };
     }
 
-    add_vote() {
+    toggle_vote() {
         var {voters, user} = this.props;
-        if (this.can_vote()) {
+        if (this.not_voted()) {
             voters.push(user.uid);
-            this.props.onVote(voters);
+        } else {
+            var index = voters.indexOf(user.uid);
+            voters.pop(index);
         }
+        this.props.onVote(voters);
     }
 
-    can_vote() {
+    not_voted() {
         var {voters, user} = this.props;
         return voters.indexOf(user.uid) == -1;
     }
 
     render() {
         var {voters, color} = this.props;
-        var btn_cls = this.can_vote() ? 'btn-default' : 'btn-primary';
+        var btn_cls = this.not_voted() ? 'btn-default' : 'btn-primary';
         var votes = voters.length;
         var any_votes = votes > 0;
         var st = {};
         if (any_votes && color) st.backgroundColor = color;
-        var _plus_one = <button className={"btn btn-xs " + btn_cls} style={st} onClick={this.add_vote.bind(this)}>+{votes}</button>;
+        var _plus_one = <button className={"btn btn-xs " + btn_cls} style={st} onClick={this.toggle_vote.bind(this)}>+{votes}</button>;
         return (
             <span>
                 { _plus_one }

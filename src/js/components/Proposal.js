@@ -20,7 +20,8 @@ export default class Proposal extends React.Component {
         decision: null,
         user: null,
         columns: [],
-        score: null
+        score: null,
+        top: false
     }
     constructor(props) {
         super(props);
@@ -78,7 +79,7 @@ export default class Proposal extends React.Component {
     }
 
     render_columns() {
-        var {decision, proposal, user} = this.props;
+        var {decision, proposal, user, top} = this.props;
         var n_cols = 2 * (decision.pros_cons_enabled ? 1 : 0) + ((decision.custom_met_enabled && decision.custom_metrics) ? decision.custom_metrics.length : 0);
         var col_cls = util.col_class(n_cols);
         var cols = [];
@@ -97,13 +98,13 @@ export default class Proposal extends React.Component {
     render() {
         var _add_resource, _score;
         var p = this.props.proposal;
-        var {decision, score} = this.props;
+        var {decision, score, top} = this.props;
         var {new_resource} = this.state;
         var sentences = p.text.split('.');
         var text = p.text;
         if (sentences.length > 0) {
           var lead = sentences.splice(0, 1)[0];
-          text = <div onClick={this.request_edit.bind(this, 'text', 'Edit proposal text')}><b>{lead}.</b> { sentences.join('.') }</div>
+          text = <div onClick={this.request_edit.bind(this, 'text', 'Edit proposal text')} className="editable"><i className="fa fa-pencil show_hover" /> <b>{lead}.</b> { sentences.join('.') }</div>
         }
         if (new_resource) {
             _add_resource = (
@@ -128,9 +129,11 @@ export default class Proposal extends React.Component {
             }) }
             </ul>
         );
+        var st = {};
         if (score != null) _score = <span className="badge badge-default">Score: { score }</span>
+        if (top) st.backgroundColor = "#D8FEEB";
         return (
-            <Paper className="proposal" key={p.id}>
+            <Paper className="proposal" key={p.id} style={st}>
                 <div className="row">
                     <div className="col-sm-4">
                       { _score }

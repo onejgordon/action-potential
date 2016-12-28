@@ -1,8 +1,8 @@
 # Action Potential
 
-Ultra-light decision app for distributed teams (or anyone).
+An experimental, ultra-lightweight decision app for distributed teams (or anyone)
 
-## SETUP
+## Setup
 
 * `pip install -r requirements.txt -t lib`
 * Create a src/js/config/base.json file from src/js/config/base.template.js from Firebase web credentials.
@@ -14,8 +14,10 @@ Ultra-light decision app for distributed teams (or anyone).
 * ReactJS
 * MaterialUI
 
-## ROADMAP
+## Todo
 
+- Deleting of proposals / resources, pros/cons
+- More visual custom metric display
 - Weighting metrics (& pros/cons?)
 - Un-voting for pros/cons
 - Tallying winning proposal

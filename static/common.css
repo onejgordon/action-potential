@@ -20,6 +20,14 @@ h2 {
 /* New style table (ListView) */
 
 
+* > .show_hover {
+    display: none;
+}
+
+*:hover > .show_hover {
+    display: inline-block;
+}
+
 .list-group li {
     display: block;
     color: black;

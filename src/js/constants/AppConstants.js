@@ -1,7 +1,7 @@
 var AppConstants = {
   YEAR: "2016",
   SITENAME: "Action Potential",
-  DESCRIPTION: "Ultra-light decision app for distributed teams (or anyone)",
+  DESCRIPTION: "An experimental, ultra-lightweight decision app for distributed teams (or anyone)",
   COMPANY: "Shore East",
   BASE_URL: "http://action-potential.appspot.com",
   USER_READ: 1,
@@ -27,11 +27,11 @@ var AppConstants = {
     3: "green"
   },
   METRIC_RATINGS: [
-    { label: "++", value: 2 },
-    { label: "+", value: 1 },
-    { label: "~", value: 0 },
-    { label: "-", value: -1 },
-    { label: "--", value: -2 }
+    { label: "Very High", value: 2 },
+    { label: "High", value: 1 },
+    { label: "Medium", value: 0 },
+    { label: "Low", value: -1 },
+    { label: "Very Low", value: -2 }
   ],
   MAX_CUSTOM_METRICS: 2,
   DECISION: 1,

@@ -38,7 +38,6 @@ export default class ProposalCustomMetric extends React.Component {
                     n = n + 1;
                 }
             }
-            console.log(total);
             if (n > 0) return total / n;
             else return null;
         }
@@ -66,7 +65,7 @@ export default class ProposalCustomMetric extends React.Component {
         var team_rating = this.get_metric_average();
         return (
             <div>
-                <b>Team:</b> { team_rating || "?" }<br/>
+                <b>Team average:</b> { team_rating == null ? "?" : team_rating.toFixed(2) }<br/>
                 <Select options={AppConstants.METRIC_RATINGS} value={my_rating} onChange={this.change_rating.bind(this)} />
             </div>
         );
