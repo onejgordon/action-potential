@@ -142,6 +142,40 @@ export default class Decision extends React.Component {
       this.setState({decision: decision});
     }
 
+    proposal_score(p) {
+      var d = this.state.decision;
+      if (d && p) {
+        // TODO: Implement weights
+        var score = 0;
+        var pros_cons_weight = 1.0;
+        var custom_metrics_weight = 1.0;
+        if (d.pros_cons_enabled && p.pros){
+          Object.keys(p.pros).forEach((pro_id) => {
+            var voters = p.pros[pro_id].voters;
+            if (voters) score += voters.length * pros_cons_weight;
+          });
+        }
+        if (d.pros_cons_enabled &&p.cons){
+          Object.keys(p.cons).forEach((con_id) => {
+            var voters = p.cons[con_id].voters;
+            if (voters) score -= voters.length * pros_cons_weight;
+          });
+        }
+        if (d.custom_met_enabled && d.custom_metrics && p.custom_metrics) {
+          p.custom_metrics.forEach((metric) => {
+            var votes = [];
+            Object.keys(metric).forEach((voter_id) => {
+              var vote = metric[voter_id];
+              votes.push(vote);
+            })
+            score += util.average(votes);
+          });
+        }
+        return score;
+      }
+      return null;
+    }
+
     handle_title_click() {
       this.begin_edit(AppConstants.DECISION, null, 'title', "Edit title");
     }
@@ -149,13 +183,19 @@ export default class Decision extends React.Component {
     render_column_headers() {
       var {decision} = this.state;
       var columns = [];
-      if (decision.pros_cons_enabled) columns = [AppConstants.PRO_LABEL, AppConstants.CON_LABEL];
-      if (decision.custom_met_enabled && decision.custom_metrics) columns = columns.concat(decision.custom_metrics);
+      if (decision.pros_cons_enabled) columns = [
+        {label: AppConstants.PRO_LABEL},
+        {label: AppConstants.CON_LABEL}
+      ];
+      if (decision.custom_met_enabled && decision.custom_metrics) decision.custom_metrics.forEach((metric) => {
+        columns.push({label: metric, custom: true});
+      });
       var col_cls = util.col_class(columns.length);
       var col_cls = col_cls + " text-center";
       return columns.map((col, i) => {
+        var icon = col.custom ? <i className="fa fa-user"/> : null;
         return (<div className={col_cls} key={i}>
-          <b>{ col }</b>
+          <b>{icon} { col.label }</b>
         </div>);
       });
     }
@@ -205,7 +245,7 @@ export default class Decision extends React.Component {
           </div>
 
           <div className="row">
-            <div className="col-sm-4 col-sm-offset-8">
+            <div className="col-sm-8 col-sm-offset-4">
               <div className="row">
                 { this.render_column_headers() }
               </div>
@@ -213,7 +253,10 @@ export default class Decision extends React.Component {
           </div>
 
           { util.flattenDict(this.state.proposals).map((p) => {
-            return <Proposal proposal={p} decision={decision} user={this.props.user}
+            var score = this.proposal_score(p);
+            return <Proposal proposal={p}
+                      decision={decision} user={this.props.user}
+                      score={score}
                       onProposalUpdate={this.update_proposal.bind(this)}
                       onRequestEdit={this.begin_edit.bind(this)} />
           }) }

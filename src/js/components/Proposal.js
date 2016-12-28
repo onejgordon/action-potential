@@ -19,7 +19,8 @@ export default class Proposal extends React.Component {
         proposal: null,
         decision: null,
         user: null,
-        columns: []
+        columns: [],
+        score: null
     }
     constructor(props) {
         super(props);
@@ -94,9 +95,9 @@ export default class Proposal extends React.Component {
     }
 
     render() {
-        var _add_resource;
+        var _add_resource, _score;
         var p = this.props.proposal;
-        var {decision} = this.props;
+        var {decision, score} = this.props;
         var {new_resource} = this.state;
         var sentences = p.text.split('.');
         var text = p.text;
@@ -127,10 +128,12 @@ export default class Proposal extends React.Component {
             }) }
             </ul>
         );
+        if (score != null) _score = <span className="badge badge-default">Score: { score }</span>
         return (
             <Paper className="proposal" key={p.id}>
                 <div className="row">
                     <div className="col-sm-4">
+                      { _score }
                       { text }
                       { _resources }
                       { _add_resource }
