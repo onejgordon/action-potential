@@ -1,8 +1,7 @@
 import logging
 from datetime import datetime, timedelta
-import webapp2
-from google.appengine.ext import ndb, deferred, blobstore
-from google.appengine.api import memcache, mail, images, taskqueue, search
+from google.appengine.ext import ndb, deferred
+from google.appengine.api import memcache, mail
 import json
 from constants import *
 import tools
@@ -202,26 +201,6 @@ class User(ndb.Model):
         return pw
 
 
-class Decision(ndb.Model):
-    '''
-    Parent - User
-    Key - date_iso
-    '''
-    user = ndb.KeyProperty(User)
-    date = ndb.StringProperty() # ISO
-    count = ndb.IntegerProperty(indexed=False)
-    starred = ndb.BooleanProperty(default=False)
-
-    def json(self):
-        return {
-            'id': self.key.id(),
-            'date': self.date,
-            'user_id': self.user.id(),
-            'count': self.count,
-            'starred': self.starred
-        }
-
-
 class APILog(ndb.Model):
     """
     Key - ID
@@ -283,28 +262,3 @@ class APILog(ndb.Model):
     def Recent(_max=20):
         q = APILog.query().order(-APILog.date)
         return q.fetch(_max)
-
-class Item(object):
-
-    def __init__(self, id=None, svc=None, title=None, subhead=None, image=None, details=None, link=None, type=None):
-        self.id = id
-        self.svc = svc
-        self.title = title
-        self.subhead = subhead
-        self.details = details
-        self.link = link
-        self.image = image
-        self.type = type
-
-
-    def json(self):
-        return {
-            'id': self.id,
-            'svc': self.svc,
-            'title': self.title,
-            'subhead': self.subhead,
-            'details': self.details,
-            'image': self.image,
-            'link': self.link,
-            'type': self.type
-        }

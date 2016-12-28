@@ -40,10 +40,6 @@ app = webapp2.WSGIApplication(
      [
 
       # Admin Actions
-      webapp2.Route('/admin/gauth/init', handler=adminActions.Init, name="aInit"),
-      webapp2.Route('/admin/actions/clean_delete/<key>', handler=adminActions.CleanDelete, name="CleanDelete"),
-      webapp2.Route('/admin/actions/users/create', handler=adminActions.CreateUser, name="aCreateCustomer"),
-      webapp2.Route('/admin/actions/users/<ukey>/logout', handler=adminActions.LogoutUser, name="LogoutUser"),
 
       # API - Auth
       webapp2.Route('/api/logout', handler=api.Logout, name="apiLogout"),
@@ -62,9 +58,8 @@ app = webapp2.WSGIApplication(
       # Cron jobs (see cron.yaml)
       webapp2.Route('/cron/monthly', handler=cronActions.Monthly),
       webapp2.Route('/cron/digests/admin', handler=cronActions.AdminDigest),
-      webapp2.Route('/cron/oauth/google_key_certs', handler=adminActions.UpdateGoogleKeyCerts),
 
-      webapp2.Route(r'/<:.*>', handler=views.CloudmemoryApp, name="CloudmemoryApp"),
+      webapp2.Route(r'/<:.*>', handler=views.ActionPotentialApp, name="ActionPotentialApp"),
 
 
       ], debug=True,

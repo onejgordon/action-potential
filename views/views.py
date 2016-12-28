@@ -14,7 +14,7 @@ import handlers
 import logging
 import jinja2
 
-class CloudmemoryApp(handlers.BaseRequestHandler):
+class ActionPotentialApp(handlers.BaseRequestHandler):
     @authorized.role()
     def get(self, *args, **kwargs):
         gmods = {
@@ -29,11 +29,6 @@ class CloudmemoryApp(handlers.BaseRequestHandler):
         d = kwargs.get('d')
         d['constants'] = {
             "ga_id": GA_ID
-        }
-        d['alt_bootstrap'] = {
-            "UserStore": {
-                'user': self.user.json() if self.user else None
-            }
         }
         d['gautoload'] = urllib.quote_plus(json.dumps(gmods).replace(' ',''))
         self.render_template("index.html", **d)

@@ -24,8 +24,6 @@ var AppConstants = require('constants/AppConstants');
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
 
-var UserActions = require('actions/UserActions');
-var UserStore = require('stores/UserStore');
 import connectToStores from 'alt-utils/lib/connectToStores';
 import {authDecorator} from 'utils/component-utils';
 import { browserHistory } from 'react-router';
@@ -40,13 +38,6 @@ export default class App extends React.Component {
 
     };
   }
-  // static getStores() {
-  //   return [UserStore];
-  // }
-  // static getPropsFromStores() {
-  //   var st = UserStore.getState();
-  //   return st;
-  // }
 
   componentDidMount() {
     var tz = this.props.user ? this.props.user.timezone : "Africa/Nairobi";
