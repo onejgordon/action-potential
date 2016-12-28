@@ -1,0 +1,4 @@
+cron:
+- description: monthly cron
+  url: /cron/monthly
+  schedule: 1 of month 22:00

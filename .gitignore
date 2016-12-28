@@ -1,0 +1,9 @@
+*.pyc
+node_modules/*
+dist/*
+docs/_build/*
+client_secrets.json
+lib/*
+src/js/constants/client_secrets.js
+src/js/config/base.js
+secrets.py
