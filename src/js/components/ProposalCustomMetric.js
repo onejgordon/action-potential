@@ -68,7 +68,7 @@ export default class ProposalCustomMetric extends React.Component {
         var my_rating = this.get_my_metric_rating();
         var average = this.get_metric_average();
         return (
-            <div className="center-block">
+            <div className="center-block" style={{marginTop: "10px"}}>
                 <BarScale user_value={my_rating}
                     average={average}
                     onChange={this.change_rating.bind(this)} />

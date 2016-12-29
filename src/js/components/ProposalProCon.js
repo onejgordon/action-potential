@@ -72,7 +72,7 @@ export default class ProposalProCon extends React.Component {
         var _factors;
         if (!factors) _factors = <div className="empty" style={{textAlign: 'left'}}><small>None yet</small></div>
         else _factors = (
-            <ul>
+            <ul className="factors">
                 { util.flattenDict(factors).map((f, i) => {
                 return <li key={f.id}>
                             { util.capitalize(f.text) }&nbsp;
@@ -87,9 +87,7 @@ export default class ProposalProCon extends React.Component {
         );
         return (
             <div>
-                <ul>
                 { _factors }
-                </ul>
                 <FlatButton labelStyle={this.ADD_STYLE} onClick={this.add_pro_con.bind(this, type_int)} label={"Add " + label} />
             </div>
         )

@@ -34,7 +34,8 @@ export default class Decision extends React.Component {
         decision: {},
         loading: true,
         editing: null,
-        invite_link_showing: false
+        invite_link_showing: false,
+        help_showing: false
       };
     }
 
@@ -73,8 +74,9 @@ export default class Decision extends React.Component {
     }
 
 
-    begin_edit(type, id, prop, _prompt) {
+    begin_edit(type, id, prop, _prompt, _multiline) {
       var prompt = _prompt || "Enter new value";
+      var multiline = _multiline == null ? false : _multiline;
       var value = '';
       var state = this.state;
       if (type == AppConstants.DECISION) value = state.decision[prop];
@@ -85,7 +87,8 @@ export default class Decision extends React.Component {
           value: value,
           type: type, // Path to update in state, e.g. ['proposals','xlksjf21','text']
           id: id, // null for decision, otherwise id of proposal to update
-          prop: prop // Property to update
+          prop: prop, // Property to update
+          multiline: multiline
         }
       })
     }
@@ -127,7 +130,8 @@ export default class Decision extends React.Component {
         id: id,
         creator: user.uid,
         text: "New proposal. Click to add details.",
-        ts_created: now.getTime()
+        ts_created: now.getTime(),
+        decisionId: decisionId
       }
       this.setState({proposals});
     }
@@ -218,10 +222,32 @@ export default class Decision extends React.Component {
       this.setState({invite_link_showing: !this.state.invite_link_showing});
     }
 
+    toggle_help() {
+      this.setState({help_showing: !this.state.help_showing});
+    }
+
     back() {
       this.props.router.push('/app/main');
     }
 
+    render_help() {
+      return (
+        <Dialog title="Help" open={this.state.help_showing} onRequestClose={this.toggle_help.bind(this)}>
+
+          <p>
+            Give your decision (problem, question, issue) a name, and add descriptive details, then invite
+            others by sharing the link. All collaborators can:
+          </p>
+
+          <ul>
+            <li>Add proposals</li>
+            <li>Add and +1 pros/cons</li>
+            <li>Define and provide ratings for custom metrics (if enabled)</li>
+          </ul>
+
+        </Dialog>
+      )
+    }
     render_column_headers() {
       var {decision} = this.state;
       var columns = [];
@@ -251,7 +277,11 @@ export default class Decision extends React.Component {
       if (editing) {
         return (
           <Dialog title={editing.prompt} actions={actions} open={true} onRequestClose={this.cancel_edit.bind(this)}>
-            <TextField floatingLabelText={editing.prompt} value={editing.value} onChange={this.changeHandler.bind(this, 'editing', 'value')} fullWidth={true} />
+            <TextField
+                floatingLabelText={editing.prompt}
+                value={editing.value}
+                multiLine={editing.multiline}
+                onChange={this.changeHandler.bind(this, 'editing', 'value')} fullWidth={true} />
           </Dialog>
         )
       }
@@ -297,13 +327,14 @@ export default class Decision extends React.Component {
             <div className="row">
               <div className="col-sm-8">
                 <h2 className="center-upper">Problem / Decision Details</h2>
-                <p className="lead editable" style={{padding: '10px'}} onClick={this.begin_edit.bind(this, AppConstants.DECISION, null, 'text', "Edit text / details")}><i className="fa fa-pencil show_hover" /> { decision.text || "Not details yet." }</p>
+                <p className="lead editable" style={{padding: '10px'}} onClick={this.begin_edit.bind(this, AppConstants.DECISION, null, 'text', "Edit text / details", true)}><i className="fa fa-pencil show_hover" /> { decision.text || "Not details yet." }</p>
               </div>
               <div className="col-sm-4 settings">
                 <h2 className="center-upper">Settings</h2>
                 <Toggle label="Pros & Cons" toggled={decision.pros_cons_enabled} onToggle={this.changeHandlerToggle.bind(this, 'decision', 'pros_cons_enabled')} />
                 <Toggle label="Custom Metrics" toggled={decision.custom_met_enabled} onToggle={this.changeHandlerToggle.bind(this, 'decision', 'custom_met_enabled')}/>
                 { _metrics_selector }
+                <p className="gray">Max - two. Metrics should be named such that higher is better.</p>
               </div>
             </div>
           </div>
@@ -347,22 +378,29 @@ export default class Decision extends React.Component {
             <ToolbarGroup>
               <IconButton
                 tooltip="Back"
-                color="white"
+                iconStyle={{color: "white"}}
                 onClick={this.back.bind(this)}
                 iconClassName="material-icons">keyboard_arrow_left</IconButton>
 
               <IconButton
                 tooltip="Invite"
-                color="white"
+                iconStyle={{color: "white"}}
                 onClick={this.toggle_invite_link.bind(this)}
                 iconClassName="material-icons">person_add</IconButton>
+
+              <IconButton
+                tooltip="Help"
+                iconStyle={{color: "white"}}
+                onClick={this.toggle_help.bind(this)}
+                iconClassName="material-icons">help</IconButton>
 
             </ToolbarGroup>
           </Toolbar>
 
           { _content }
 
-          {this.render_editor()}
+          { this.render_editor() }
+          { this.render_help() }
 
         </div>
       );

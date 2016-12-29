@@ -9,14 +9,7 @@ var AppConstants = require('constants/AppConstants');
 var toastr = require('toastr');
 import history from 'config/history'
 var $ = require('jquery');
-
-var mui = require('material-ui'),
-  FontIcon = mui.FontIcon,
-  RaisedButton = mui.RaisedButton,
-  FlatButton = mui.FlatButton;
-
-var UserActions = require('actions/UserActions');
-var UserStore = require('stores/UserStore');
+import {FontIcon, RaisedButton, FlatButton} from 'material-ui';
 var AppConstants = require('constants/AppConstants');
 
 import connectToStores from 'alt-utils/lib/connectToStores';
@@ -62,42 +55,48 @@ class Public extends React.Component {
     this.props.router.push(page);
   }
 
+  signin_dialog() {
+    base.authWithOAuthPopup('google', (error, user_data) => {
+      if (user_data) this.props.router.push(`/app/main`);
+      else if (error) console.log(error);
+    });
+  }
+
   render() {
     var {user} = this.props;
     var cta;
     if (user) {
       cta = (
         <div>
-          <p>You are signed in. Go to <Link to={`/app/main`}><button className="btn btn-default">My Decisions</button></Link></p>
+          <p>You are signed in. Go to <Link to={`/app/main`}><RaisedButton label="My Decisions" /></Link></p>
         </div>
       );
     } else {
-      cta = <p>Sign in to try it.</p>
+      cta = <div>
+        <p>Try it!</p>
+        <RaisedButton primary={true} label="Sign In" onClick={this.signin_dialog.bind(this)} />
+      </div>
     }
     return (
       <div className="container">
 
-          <div className="text-center">
+        <div className="text-center">
 
-            <div className="row">
-              <div className="col-sm-6">
-                <img src="/images/actionpotential_512.png" className="img img-responsive" />
-              </div>
-              <div className="col-sm-6">
-                <p className="lead" style={{fontSize: "3em"}}>{ AppConstants.DESCRIPTION }</p>
-                <div style={{color: "gray", fontSize: "1.6em"}}>
-                  { cta }
-                </div>
+          <div className="row">
+            <div className="col-sm-6">
+              <img src="/images/actionpotential_512.png" className="img img-responsive" />
+            </div>
+            <div className="col-sm-6">
+              <p className="lead" style={{fontSize: "3em"}}>{ AppConstants.DESCRIPTION }</p>
+              <div style={{color: "gray", fontSize: "1.6em"}}>
+                { cta }
+
+                <small>Built with <a href="https://firebase.google.com" target="_blank">Firebase</a>, <a href="https://github.com/tylermcginnis/re-base" target="_blank">Re-base</a>, and <a href="https://facebook.github.io/react/">React.js</a>. See source on <a href="https://github.com/onejgordon/action-potential" target="_blank">Github</a></small>
               </div>
             </div>
-
           </div>
 
-          <div className="text-center" style={{marginTop: "15px"}}>
-
-
-
-          </div>
+        </div>
 
       </div>
     )

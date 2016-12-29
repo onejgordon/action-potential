@@ -9,6 +9,7 @@ var api = require('utils/api');
 var bootbox = require('bootbox');
 var ProposalProCon = require('components/ProposalProCon');
 var ProposalCustomMetric = require('components/ProposalCustomMetric');
+var toastr = require('toastr');
 import {Paper, List, RaisedButton,
     FlatButton, TextField, IconMenu, MenuItem,
     FontIcon, IconButton} from 'material-ui';
@@ -45,7 +46,7 @@ export default class Proposal extends React.Component {
 
     request_edit(prop, prompt) {
       var p = this.props.proposal;
-      this.props.onRequestEdit(AppConstants.PROPOSAL, p.id, prop, prompt);
+      this.props.onRequestEdit(AppConstants.PROPOSAL, p.id, prop, prompt, true);
     }
 
     update(p) {
@@ -63,12 +64,18 @@ export default class Proposal extends React.Component {
         var {new_resource} = this.state;
         var p = this.props.proposal;
         if (!p.resources) p.resources = [];
-        p.resources.push({
-            uri: new_resource.uri,
-            title: new_resource.uri // TODO
-        });
-        this.update(p);
-        this.cancel_resource();
+        var uri = new_resource.uri;
+        var valid = uri.length > 5 && uri.startsWith('http');
+        if (valid) {
+            p.resources.push({
+                uri: new_resource.uri,
+                title: new_resource.uri // TODO
+            });
+            this.update(p);
+            this.cancel_resource();
+        } else {
+            toastr.error("Invalid URL - Make sure it starts with http");
+        }
     }
 
     cancel_resource() {
@@ -114,16 +121,12 @@ export default class Proposal extends React.Component {
         var {decision, score, top} = this.props;
         var {new_resource} = this.state;
         var sentences = p.text.split('.');
-        var text = p.text;
-        if (sentences.length > 0) {
-          var lead = sentences.splice(0, 1)[0];
-          text = <div onClick={this.request_edit.bind(this, 'text', 'Edit proposal text')} className="editable"><i className="fa fa-pencil show_hover" /> <b>{lead}.</b> { sentences.join('.') }</div>
-        }
+        var _text = p.text;
         if (new_resource) {
             _add_resource = (
                 <div>
                     <TextField value={new_resource.uri} onChange={this.changeHandler.bind(this, 'new_resource', 'uri')} placeholder="Enter resource URL" />
-                    <FlatButton onClick={this.add_resource.bind(this)} label="Add" />
+                    <FlatButton onClick={this.add_resource.bind(this)} label="Add" primary={true} />
                     <FlatButton onClick={this.cancel_resource.bind(this)} label="Cancel" />
                 </div>
             );
@@ -136,11 +139,11 @@ export default class Proposal extends React.Component {
         if (p) _cols = this.render_columns();
         var _resources;
         if (p.resources) _resources = (
-            <ul>
+            <ul className="resources">
             { p.resources.map((r, i) => {
                 return (
                     <li>
-                        <a href={ r.uri } className="black-transp"><i className="fa fa-globe"></i> { r.title || r.uri }</a>
+                        <a href={ r.uri } target="_blank" className="black-transp"><i className="fa fa-globe"></i> { r.title || r.uri }</a>&nbsp;
                         <a href="javascript:void(0)" onClick={this.delete_resource.bind(this, i)} className="red show_hover"><i className="fa fa-trash"/></a>
                     </li>
                 );
@@ -151,7 +154,16 @@ export default class Proposal extends React.Component {
         if (score != null) {
             var label_cls = top ? 'success' : 'default';
             var icon = top ? <i className="fa fa-check"/> : <i className="fa fa-star"/>;
-            _score = <span className={"label label-"+label_cls}>{icon} { score.toFixed(1) }</span>
+            _score = <span className={"score label label-"+label_cls}>{icon} { score.toFixed(1) }</span>
+        }
+        if (sentences.length > 0) {
+          var lead = sentences.splice(0, 1)[0];
+          _text = (
+            <div onClick={this.request_edit.bind(this, 'text', 'Edit proposal text')} className="editable">
+                { _score }
+                <i className="fa fa-pencil show_hover" /> <b>{lead}.</b> { sentences.join('.') }
+            </div>
+        );
         }
         var cls = "proposal";
         if (top) {
@@ -162,28 +174,30 @@ export default class Proposal extends React.Component {
             cls = cls + " proposal-negative";
         }
         var _menu = (
-            <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
-                <MenuItem onClick={this.delete.bind(this)} primaryText="Delete" />
-            </IconMenu>
+            <div className="show_hover" style={{position: 'absolute', top: '0px', right: '0px'}}>
+                <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
+                    <MenuItem leftIcon={<FontIcon className="material-icons">delete</FontIcon>} onClick={this.delete.bind(this)} primaryText="Delete" />
+                </IconMenu>
+            </div>
         );
         return (
-            <Paper className={cls} key={p.id} style={st}>
-                <div className="row">
-                    <div className="col-sm-4">
-                        { _menu }
-                        { _score }
-                        { text }
-                        { _resources }
-                        { _add_resource }
-                    </div>
-                    <div className="col-sm-8">
-                        <div className="row">
-                            { _cols }
+            <div style={{position: 'relative'}}>
+                <Paper className={cls} key={p.id} style={st}>
+                    <div className="row">
+                        <div className="col-sm-4">
+                            { _text }
+                            { _resources }
+                            { _add_resource }
+                        </div>
+                        <div className="col-sm-8">
+                            <div className="row">
+                                { _cols }
+                            </div>
                         </div>
                     </div>
-                </div>
-
-            </Paper>
+                </Paper>
+                { _menu }
+            </div>
         );
     }
 }

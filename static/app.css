@@ -49,6 +49,10 @@ body {
     text-align: right;
 }
 
+.score {
+    margin-right: 4px;
+}
+
 .map {
     min-height: 250px;
     margin: 10px 0;
@@ -107,11 +111,12 @@ a.red:hover {
 
 .siteHeader {
     text-align: center;
+    margin-top: 15px;
     margin-bottom: 15px;
 }
 
 .userSection {
-    margin-top: 3px;
+    margin-top: 15px;
     text-align: right;
 }
 
@@ -160,17 +165,31 @@ a.red:hover {
 
 /* Decision */
 
+/* Proposal */
+
 .proposal {
     margin: 10px 0px;
     padding: 15px;
 }
 
 .proposal-top {
-    font-size: 1.6em;
+    font-size: 1.4em;
 }
 
 .proposal-negative {
     opacity: 0.65;
+}
+
+ul.factors {
+    list-style-type: square;
+    padding-left: 0px;
+}
+
+ul.resources {
+    list-style-type: square;
+    padding-left: 0px;
+    font-size: 12px;
+    list-style-type: none;
 }
 
 .settings {

@@ -91,7 +91,7 @@ export default class Main extends React.Component {
       return (
         <div>
 
-          <RaisedButton label="New Decision" onClick={this.create_decision.bind(this)} />
+          <RaisedButton label="New Decision" onClick={this.create_decision.bind(this)} primary={true} />
 
           <LoadStatus loading={loading} empty={false} />
 

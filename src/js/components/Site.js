@@ -70,13 +70,6 @@ class Site extends React.Component {
     this.props.router.push(`/app/main`);
   }
 
-  signin_dialog() {
-    base.authWithOAuthPopup('google', (error, user_data) => {
-      if (user_data) this.props.router.push(`/app/main`);
-      else if (error) console.log(error);
-    });
-  }
-
   render() {
     var YEAR = new Date().getFullYear();
     var copyright_years = AppConstants.YEAR;
@@ -95,22 +88,15 @@ class Site extends React.Component {
         </IconButton>
       );
       _user_section = (
-        <div className="userSection col-sm-3 col-sm-offset-6">
+        <div className="userSection col-sm-3 col-sm-offset-3">
           <div className="userAvatar">
             <IconMenu iconButtonElement={ _avatar }>
-              <MenuItem primaryText={user_string} />
               <MenuItem onClick={this.home.bind(this)} primaryText="Home" />
-              <MenuItem onClick={this.signout.bind(this)} primaryText="Sign Out" />
+              <MenuItem onClick={this.signout.bind(this)} primaryText={`Sign Out (${user_string})`} />
             </IconMenu>
           </div>
         </div>
         )
-    } else {
-      _user_section = (
-        <div className="userSection col-sm-3 col-sm-offset-6">
-          <RaisedButton primary={true} label="Sign In" onClick={this.signin_dialog.bind(this)} />
-        </div>
-      );
     }
     if (YEAR != AppConstants.YEAR) copyright_years = copyright_years + " - " + YEAR;
     return (
@@ -119,7 +105,7 @@ class Site extends React.Component {
 
             <div className="container">
               <header className="topBar row">
-                <div className="siteHeader col-sm-3">
+                <div className="siteHeader col-sm-6">
                   <div>
                     <Link to="/app"><h1 className="siteTitle"><img src="/images/actionpotential_48.png" /> { SITENAME }</h1></Link>
                   </div>

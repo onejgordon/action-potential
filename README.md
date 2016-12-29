@@ -2,9 +2,18 @@
 
 An experimental, ultra-lightweight decision app for distributed teams (or anyone)
 
-## Setup
+## Requirements
+
+* gcloud
+* Projects on GCP and Firebase
+
+## Setup an Instance
 
 * `pip install -r requirements.txt -t lib`
+* `npm install`
+* Create projects on Google Cloud Platform
+* Import this project into Firebase
+* Create gcloud config (gcloud config create ap)
 * Create a src/js/config/base.json file from src/js/config/base.template.js from Firebase web credentials.
 
 ## Libraries / Technologies
@@ -13,16 +22,14 @@ An experimental, ultra-lightweight decision app for distributed teams (or anyone
 * https://firebase.google.com/docs/database/
 * ReactJS
 * MaterialUI
+* gulp
 
 ## Todo
 
-- Deleting of proposals / resources, pros/cons
-- More visual custom metric display
 - Weighting metrics (& pros/cons?)
-- Un-voting for pros/cons
-- Tallying winning proposal
 - Non-metrics based proposal voting (?)
 - Merge options
 - Export to gSheet
+- Password protection
 - Show list of decisions contributed to as well (indexes?)
 
