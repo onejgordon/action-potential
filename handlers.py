@@ -120,12 +120,10 @@ class JsonRequestHandler(BaseRequestHandler):
     def handle_exception(self, exception, debug_mode):
         DeadlineExceededError = "DeadlineExceededError"
         HTTPUnauthorized = "HTTPUnauthorized"
-        APIError = "APIError"
-        exception_name, exception_details, exception_traceback = self.process_exception(suppressed_exceptions=[HTTPUnauthorized, APIError])
+        exception_name, exception_details, exception_traceback = self.process_exception(suppressed_exceptions=[HTTPUnauthorized])
         error_messages = {
             DeadlineExceededError: "The request took too long to process.",
-            HTTPUnauthorized: "Request error, please try again", #invalid CSRF token in ajax
-            APIError: exception_details
+            HTTPUnauthorized: "Request error, please try again" #invalid CSRF token in ajax
         }
         if exception_name in error_messages:
             self.json_out(message=error_messages[exception_name], success=False)

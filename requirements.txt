@@ -1,3 +1,4 @@
+# Install with pip install -t lib -r requirements.txt (into lib/)
 funcsigs==1.0.2
 gsutil==4.16
 npm==0.1.1

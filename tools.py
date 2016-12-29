@@ -95,19 +95,6 @@ def clone_entity(e, **extra_args):
 def str_to_tuple(s):
     return tuple(float(x) for x in s[1:-1].split(','))
 
-def create_paging_specs(self, items_query, items_per_page=25):
-    pg = self.request.get_range('pg', default=1)
-    n_items = items_query.count()
-    items = items_query.fetch(items_per_page, offset=(pg-1)*items_per_page)
-    if n_items < items_per_page:
-        n_pages = 1
-    else:
-        n_pages = n_items / items_per_page
-        if n_items % items_per_page > 0:
-            n_pages += 1
-    specs = [n_pages, pg]
-    return [items, specs]
-
 def unixtime(dt=None, ms=True):
     if not dt:
         dt = datetime.now()
@@ -240,68 +227,6 @@ def lookupDict(model, itemlist, keyprop="key_string", valueTransform=None):
             lookup[keyval] = val
     logging.debug("Produced lookup dict for type %s with %d keys" % (model, len(lookup.keys())))
     return lookup
-
-def reverse_geocode(lat, lon, service="osm"):
-    logging.debug("Performing reverse geocode on %s and %s with %s" % (lat, lon, service))
-    if service == "google":
-        url = "https://maps.googleapis.com/maps/api/geocode/json?"
-        enc = urllib.urlencode([('latlng',"%s,%s" % (lat, lon)), ('sensor','true')])
-        data_path_priority = [['results',0,'formatted_address']]
-        country_code_path = []
-    elif service == "yahoo":
-        url = "http://where.yahooapis.com/geocode?"
-        enc = urllib.urlencode([
-            ('location',"%s,%s" % (lat, lon)),
-            ('appid',YAHOO_APP_ID),
-            ('flags','J') # JSON
-            ])
-        data_path_priority = []
-        country_code_path = []
-    elif service == "osm": # Open Streetmap
-        url = "http://nominatim.openstreetmap.org/reverse?"
-        enc = urllib.urlencode([
-            ('lat',lat),
-            ('lon',lon),
-            ('format','json')
-            ])
-        data_path_priority = [
-            ['address','suburb'],
-            ['address','commercial'],
-            ['address','road'],
-            ['display_name']
-            ]
-        country_code_path = ['address','country_code']
-    loc = country_code = None
-    try:
-        result = urlfetch.fetch(url+enc, deadline=3)
-        if result.status_code == 200:
-            response = json.loads(result.content)
-            # Pull Region
-            for data_path in data_path_priority:
-                node = response
-                for key in data_path:
-                    if node.has_key(key):
-                        node = node[key]
-                    else:
-                        break
-                if isinstance(node, (str, unicode)):
-                    loc = node
-                    break
-            # Pull Country Code
-            node = response
-            for key in country_code_path:
-                if node.has_key(key):
-                    node = node[key]
-                else:
-                    break
-            if isinstance(node, (str, unicode)) and len(node) == 2:
-                country_code = node
-        else:
-            logging.debug("Failed to retrieve from geocode API")
-    except Exception, e:
-        logging.error("Error in reverse geocode: %s" % e)
-    return [loc, country_code]
-
 
 def escapejs(value):
     _js_escapes = (
@@ -679,41 +604,6 @@ def toDecimal(amount):
         logging.error("Error in toDecimal: %s" % e)
         pass
     return value
-
-def in_same_period(ms1, ms2, period_type=4):
-    '''Check whether or not two timestamps (ms) are in the same
-      period (as defined by period_type).
-
-    Args:
-        ms1: First timestamp (ms)
-        ms2: Second timestamp (ms)
-        period_type (int): defaults to RULE.DAY
-
-    Returns:
-        boolean
-    '''
-    from constants import RULE, MS_PER_SECOND, MS_PER_MINUTE, MS_PER_HOUR, MS_PER_DAY
-    if period_type == RULE.SECOND:
-        p1, p2 = ms1 / MS_PER_SECOND, ms2 / MS_PER_SECOND
-        return p1 == p2
-    elif period_type == RULE.MINUTE:
-        p1, p2 = ms1 / MS_PER_MINUTE, ms2 / MS_PER_MINUTE
-        return p1 == p2
-    elif period_type == RULE.HOUR:
-        p1, p2 = ms1 / MS_PER_HOUR, ms2 / MS_PER_HOUR
-        return p1 == p2
-    elif period_type == RULE.DAY:
-        p1, p2 = ms1 / MS_PER_DAY, ms2 / MS_PER_DAY
-        return p1 == p2
-    elif period_type == RULE.WEEK:
-        # TODO
-        ms1_last_monday = last_monday(dt_from_ts(ms1))
-        ms2_last_monday = last_monday(dt_from_ts(ms2))
-        return ms1_last_monday == ms2_last_monday
-    elif period_type == RULE.MONTH:
-        ms1_mo_begin = get_first_day(dt_from_ts(ms1))
-        ms2_mo_begin = get_first_day(dt_from_ts(ms2))
-        return ms1_mo_begin == ms2_mo_begin
 
 def add_batched_task(callable, name_prefix, interval_mins=5, warnOnDuplicate=True, *args, **kwargs):
     """

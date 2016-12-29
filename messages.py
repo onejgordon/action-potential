@@ -1,18 +1,4 @@
 
-class EMAILS():
-
-    USER_INVITE = 1
-
-    CONTENT = {
-        USER_INVITE: {
-            'subject': '%s invited you to %s!',
-            'body': '''Your invite code is: %s
-
-To register, go to %s/login and enter your invite code.
-'''
-        }
-    }
-
 class ERROR():
   OK = 0
   UNAUTHORIZED = 1
