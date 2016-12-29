@@ -1,18 +1,13 @@
-import django_version
-import os
 from google.appengine.api import users, images
-from datetime import datetime, timedelta
+from datetime import datetime
 from google.appengine.ext.webapp import blobstore_handlers
 from models import *
 from constants import *
-import webapp2
 import urllib
 import tools
 import authorized
-import actions
 import handlers
 import logging
-import jinja2
 
 class ActionPotentialApp(handlers.BaseRequestHandler):
     @authorized.role()
@@ -49,10 +44,3 @@ def serveResource(self, bk, size=0):
         logging.error("Error in serveResource: %s" % e)
         self.error(404)
 
-class ServeBlob(blobstore_handlers.BlobstoreDownloadHandler):
-    def get(self, bk, ext=None):
-        """
-        Size: 0 = full, 100 = 100px wide
-        """
-        size = self.request.get_range('size', default=0)
-        serveResource(self, bk, size=size)

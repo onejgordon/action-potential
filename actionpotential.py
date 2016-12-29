@@ -51,7 +51,6 @@ app = webapp2.WSGIApplication(
       webapp2.Route('/api/auth/<action>', handler=api.AuthenticateAPI, handler_method="action"),
 
       # Misc
-      webapp2.Route('/res/<bk>', handler=views.ServeBlob, name="ServeBlob"),
       webapp2.Route('/_ah/warmup', handler=actions.WarmupHandler),
 
 

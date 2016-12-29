@@ -1,15 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
 
-from google.appengine.api import memcache
 from google.appengine.ext import db
-from google.appengine.ext import testbed
-from datetime import datetime, timedelta
+from datetime import datetime
 import tools
 import json
 from google.appengine.ext import deferred
 from base_test_case import BaseTestCase
-from cloudmemory import app as tst_app
+from actionpotential import app as tst_app
 
 class UtilTestCase(BaseTestCase):
 

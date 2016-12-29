@@ -4,7 +4,7 @@
 COMPANY_NAME = "Shore East"
 SITENAME = "Action Potential"
 EMAIL_PREFIX = "[ %s ] " % SITENAME
-APPNAME = "actionpotential-app"
+APPNAME = "action-potential"
 BASE = "http://%s.appspot.com" % APPNAME
 API_AUTH = "waywayb4ck"
 PLAY_STORE_LINK = ""
@@ -24,7 +24,7 @@ ERROR_EMAIL = APP_OWNER
 NOTIF_EMAILS = [APP_OWNER]
 SENDER_EMAIL = "%s Notifications <noreply@%s.appspotmail.com>" % (SITENAME, APPNAME)
 
-GA_ID = ""
+GA_ID = "UA-7713869-13"
 SVC_DATA_MCKEY = "%s:%s" # svc:date
 MEMCACHE_EXPIRE_SECS = 60*60*3
 
