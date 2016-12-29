@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from models import *
 from constants import *
 import handlers
 

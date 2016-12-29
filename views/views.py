@@ -1,12 +1,11 @@
-from google.appengine.api import users, images
+from google.appengine.api import images
 from datetime import datetime
-from google.appengine.ext.webapp import blobstore_handlers
-from models import *
 from constants import *
 import urllib
 import tools
 import authorized
 import handlers
+import json
 import logging
 
 class ActionPotentialApp(handlers.BaseRequestHandler):

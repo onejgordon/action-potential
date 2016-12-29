@@ -6,9 +6,7 @@ authorized.py
 import django_version
 import logging
 from constants import *
-from google.appengine.api import users
 from datetime import datetime
-import json
 import messages
 import tools
 

@@ -3,10 +3,7 @@ import webapp2
 from webapp2_extras import jinja2
 from datetime import datetime
 from google.appengine.api import memcache, mail
-from google.appengine.ext.webapp import blobstore_handlers
-from common import my_filters
 from webapp2_extras import sessions
-import logging
 import tools
 from constants import *
 import json
@@ -14,7 +11,6 @@ import json
 def jinja2_factory(app):
     j = jinja2.Jinja2(app)
     j.environment.filters.update({
-        'printjson': my_filters.printjson
     })
     j.environment.tests.update({
         })
@@ -136,42 +132,3 @@ class JsonRequestHandler(BaseRequestHandler):
         else:
             self.json_out(message=exception_name, success=False)
 
-
-class BaseUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
-    session_store = None
-
-    def add_message(self, level, message):
-        self.session.add_flash(message, level, BaseHandler.MESSAGE_KEY)
-        self.store()
-
-    def store(self):
-        self.session_store.save_sessions(self.response)
-
-    def json_out(self, data=None, error=0, message=None, status=None, success=True, debug=False):
-        if not error and not success:
-            error = ERROR.OTHER
-        out = {
-            'success': error == 0,
-            'code': error,
-            'message': message,
-            'data': data
-        }
-        if debug or DEBUG_API:
-            logging.debug(out)
-        self.response.write(json.dumps(out))
-        self.response.set_status(status if status else 200)
-
-    def dispatch(self):
-        # Get a session store for this request.
-        self.session_store = sessions.get_store(request=self.request)
-
-        try:
-            # Dispatch the request.
-            webapp2.RequestHandler.dispatch(self)
-        finally:
-            # Save all sessions.
-            self.session_store.save_sessions(self.response)
-
-    @webapp2.cached_property
-    def session(self):
-        return self.session_store.get_session(backend="datastore")

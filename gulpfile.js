@@ -94,11 +94,6 @@ gulp.task('build_html', function(){
     .pipe(gulp.dest(path.DEST));
 });
 
-
-gulp.task('generate_docs', shell.task([
-  'make -C ./docs html'
-]));
-
-gulp.task('production', ['build_html', 'build_bundle', 'generate_docs']);
+gulp.task('production', ['build_html', 'build_bundle']);
 
 gulp.task('default', ['build_bundle', 'watch']);

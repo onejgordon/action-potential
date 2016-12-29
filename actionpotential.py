@@ -1,11 +1,9 @@
-import os, logging
+import os
 import webapp2
 
-from actions import actions, adminActions, cronActions, schemaActions
-import tasks
+from actions import cronActions
 from views import views
 import secrets
-import api
 
 SECS_PER_WEEK = 60 * 60 * 24 * 7
 # Enable ctypes -> Jinja2 tracebacks
@@ -37,29 +35,8 @@ config = {
 }
 
 app = webapp2.WSGIApplication(
-     [
-
-      # Admin Actions
-
-      # API - Auth
-      webapp2.Route('/api/logout', handler=api.Logout, name="apiLogout"),
-
-      # API - Client
-      webapp2.Route('/api/user', handler=api.UserAPI, handler_method="update", methods=["POST"], name="UserAPI"),
-      webapp2.Route('/api/user/<uid>', handler=api.UserAPI, handler_method="detail", methods=["GET"], name="UserAPI"),
-      webapp2.Route('/api/apilog', handler=api.APILogAPI, handler_method="list", methods=["GET"]),
-      webapp2.Route('/api/auth/<action>', handler=api.AuthenticateAPI, handler_method="action"),
-
-      # Misc
-      webapp2.Route('/_ah/warmup', handler=actions.WarmupHandler),
-
-
+    [
       # Cron jobs (see cron.yaml)
       webapp2.Route('/cron/monthly', handler=cronActions.Monthly),
-      webapp2.Route('/cron/digests/admin', handler=cronActions.AdminDigest),
-
       webapp2.Route(r'/<:.*>', handler=views.ActionPotentialApp, name="ActionPotentialApp"),
-
-
-      ], debug=True,
-    config=config)
+    ], debug=True, config=config)
