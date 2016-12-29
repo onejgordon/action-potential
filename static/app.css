@@ -44,22 +44,8 @@ body {
     cursor: pointer;
 }
 
-.userAvatar {
-    margin-top: 2px;
-}
-
 .userAvatar .handle {
-    display: block;
     text-transform: uppercase;
-    text-align: right;
-    margin-top: 4px;
-}
-
-.userAvatar .location {
-    display: block;
-    text-transform: uppercase;
-    color: rgba(0,0,0,0.5);
-    font-size: 0.8em;
     text-align: right;
 }
 
@@ -69,6 +55,26 @@ body {
 }
 
 /* Text styles */
+
+.gray {
+    color: #CCC;
+}
+
+.black-transp {
+    color: rgba(0,0,0,0.5);
+}
+
+a.black-transp:hover {
+    color: black;
+}
+
+.red {
+    color: #94081A;
+}
+
+a.red:hover {
+    color: red;
+}
 
 .editable {
     cursor: pointer;
@@ -91,12 +97,6 @@ body {
 
 }
 
-header.topBar {
-    display: block;
-    text-shadow: none;
-    margin-top: 15px;
-}
-
 .vpad {
     margin: 10px 0;
 }
@@ -111,6 +111,7 @@ header.topBar {
 }
 
 .userSection {
+    margin-top: 3px;
     text-align: right;
 }
 
@@ -121,6 +122,7 @@ header.topBar {
     font-size: 1.2em;
     margin: 0 0 3px 0;
     text-shadow: none;
+    font-weight: 100;
 }
 
 .siteHeader a {
@@ -150,22 +152,78 @@ header.topBar {
     background: rgba(0,0,0,0.2);
 }
 
-/* Decision */
-
-.top_proposal {
-    margin-top: 15px;
+.btn.btn-voter {
+    border: none;
+    margin-bottom: 1px;
+    font-size: 9px;
 }
+
+/* Decision */
 
 .proposal {
     margin: 10px 0px;
-    padding: 10px;
+    padding: 15px;
+}
+
+.proposal-top {
+    font-size: 1.6em;
+}
+
+.proposal-negative {
+    opacity: 0.65;
 }
 
 .settings {
     font-size: 0.7em;
-    padding: 10px;
 }
 
 .bootbox.modal > .modal-dialog {
   z-index: 1101 !important;
+}
+
+/* Bar Scale */
+
+.barScale {
+    text-align: center;
+}
+
+.barScale .bars {
+    display: block;
+    margin: 2px auto;
+    position: relative;
+}
+
+.barScale .bars .bar {
+    display: inline-block;
+    position: absolute;
+    background: #DDD;
+    bottom: 0px;
+    cursor: pointer;
+}
+
+.barScale .bar.average {
+    display: inline-block;
+    background: #F4DFA0;
+}
+
+.barScale .bar.user {
+    display: inline-block;
+    background: #F3B05E;
+}
+
+.barScale .bar:hover {
+    display: inline-block;
+    background: #FD8D08;
+}
+
+.barScale .text {
+    font-size: 10px;
+}
+
+.barScale .text .user {
+    color: #F3B05E;
+}
+
+.barScale .text .average {
+    color: gray;
 }

@@ -9,8 +9,9 @@ var api = require('utils/api');
 var bootbox = require('bootbox');
 var ProposalProCon = require('components/ProposalProCon');
 var ProposalCustomMetric = require('components/ProposalCustomMetric');
-import {Paper, List, MenuItem, RaisedButton,
-    FlatButton, TextField} from 'material-ui';
+import {Paper, List, RaisedButton,
+    FlatButton, TextField, IconMenu, MenuItem,
+    FontIcon, IconButton} from 'material-ui';
 import {changeHandler} from 'utils/component-utils';
 
 @changeHandler
@@ -74,6 +75,18 @@ export default class Proposal extends React.Component {
         this.setState({new_resource: null});
     }
 
+    delete_resource(i) {
+        var p = this.props.proposal;
+        p.resources.splice(i, 1);
+        this.update(p);
+    }
+
+    delete() {
+        // Delete proposal
+        var p = this.props.proposal;
+        this.props.onProposalDelete(p);
+    }
+
     render_column(cls, key, content) {
         return <div className={cls} key={key}>{ content }</div>
     }
@@ -116,7 +129,7 @@ export default class Proposal extends React.Component {
             );
         } else {
             _add_resource = (
-                <small><a href="javascript:void(0)" onClick={this.start_add_resource.bind(this)} className="gray"><i className="fa fa-plus" /> Add resource</a></small>
+                <small><a href="javascript:void(0)" onClick={this.start_add_resource.bind(this)} className="black-transp"><i className="fa fa-plus" /> Add resource</a></small>
             );
         }
         var _cols;
@@ -124,22 +137,44 @@ export default class Proposal extends React.Component {
         var _resources;
         if (p.resources) _resources = (
             <ul>
-            { p.resources.map((r) => {
-                return <li><a href={ r.uri }><i className="fa fa-globe"></i> { r.title || r.uri }</a></li>
+            { p.resources.map((r, i) => {
+                return (
+                    <li>
+                        <a href={ r.uri } className="black-transp"><i className="fa fa-globe"></i> { r.title || r.uri }</a>
+                        <a href="javascript:void(0)" onClick={this.delete_resource.bind(this, i)} className="red show_hover"><i className="fa fa-trash"/></a>
+                    </li>
+                );
             }) }
             </ul>
         );
         var st = {};
-        if (score != null) _score = <span className="badge badge-default">Score: { score }</span>
-        if (top) st.backgroundColor = "#D8FEEB";
+        if (score != null) {
+            var label_cls = top ? 'success' : 'default';
+            var icon = top ? <i className="fa fa-check"/> : <i className="fa fa-star"/>;
+            _score = <span className={"label label-"+label_cls}>{icon} { score.toFixed(1) }</span>
+        }
+        var cls = "proposal";
+        if (top) {
+            cls = cls + " proposal-top";
+            // st.backgroundColor = "#D8FEEB";
+        }
+        if (score < 0) {
+            cls = cls + " proposal-negative";
+        }
+        var _menu = (
+            <IconMenu iconButtonElement={<IconButton iconClassName="material-icons">more_vert</IconButton>}>
+                <MenuItem onClick={this.delete.bind(this)} primaryText="Delete" />
+            </IconMenu>
+        );
         return (
-            <Paper className="proposal" key={p.id} style={st}>
+            <Paper className={cls} key={p.id} style={st}>
                 <div className="row">
                     <div className="col-sm-4">
-                      { _score }
-                      { text }
-                      { _resources }
-                      { _add_resource }
+                        { _menu }
+                        { _score }
+                        { text }
+                        { _resources }
+                        { _add_resource }
                     </div>
                     <div className="col-sm-8">
                         <div className="row">

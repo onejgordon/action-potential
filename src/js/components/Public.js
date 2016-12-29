@@ -66,7 +66,11 @@ class Public extends React.Component {
     var {user} = this.props;
     var cta;
     if (user) {
-      cta = <Link to={`/app/main`}><button className="btn btn-default">My Decisions</button></Link>
+      cta = (
+        <div>
+          <p>You are signed in. Go to <Link to={`/app/main`}><button className="btn btn-default">My Decisions</button></Link></p>
+        </div>
+      );
     } else {
       cta = <p>Sign in to try it.</p>
     }
@@ -75,14 +79,16 @@ class Public extends React.Component {
 
           <div className="text-center">
 
-            <FontIcon className="material-icons" style={{width: "400px", height: "200px", fontSize: "12em"}}>wb_incandescent</FontIcon>
-
-            <p className="lead" style={{fontSize: "3em"}}>{ AppConstants.DESCRIPTION }</p>
-
-            <div style={{color: "gray", fontSize: "1.6em"}}>
-
-              { cta }
-
+            <div className="row">
+              <div className="col-sm-6">
+                <img src="/images/actionpotential_512.png" className="img img-responsive" />
+              </div>
+              <div className="col-sm-6">
+                <p className="lead" style={{fontSize: "3em"}}>{ AppConstants.DESCRIPTION }</p>
+                <div style={{color: "gray", fontSize: "1.6em"}}>
+                  { cta }
+                </div>
+              </div>
             </div>
 
           </div>

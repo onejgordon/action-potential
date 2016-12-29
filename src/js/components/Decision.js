@@ -1,4 +1,5 @@
 var React = require('react');
+import { withRouter } from 'react-router'
 
 var LoadStatus = require('components/LoadStatus');
 var AppConstants = require('constants/AppConstants');
@@ -18,13 +19,7 @@ import {AppBar, List, MenuItem,
     BottomNavigation, BottomNavigationItem } from 'material-ui';
 import {changeHandler} from 'utils/component-utils';
 
-var Rebase = require('re-base');
-var base = Rebase.createClass({
-      apiKey: "AIzaSyASFn2mDGbmRYbgk36SNJNME5qe8HLLf4w",
-      authDomain: "action-potential.firebaseapp.com",
-      databaseURL: "https://action-potential.firebaseio.com",
-      storageBucket: "action-potential.appspot.com",
-}, 'action-potential-app');
+var base = require('config/base');
 
 @changeHandler
 export default class Decision extends React.Component {
@@ -37,7 +32,7 @@ export default class Decision extends React.Component {
       this.state = {
         proposals: {},
         decision: {},
-        loading: false,
+        loading: true,
         editing: null,
         invite_link_showing: false
       };
@@ -62,14 +57,19 @@ export default class Decision extends React.Component {
     init() {
       var {decisionId} = this.props.params;
       var {user} = this.props;
-      this.ref_proposals = base.syncState(`proposals/${decisionId}`, {
-        context: this,
-        state: 'proposals'
-      });
-      this.ref_decision = base.syncState(`decisions/${decisionId}`, {
-        context: this,
-        state: 'decision'
-      });
+      this.setState({loading: true}, () => {
+        this.ref_proposals = base.syncState(`proposals/${decisionId}`, {
+          context: this,
+          state: 'proposals',
+          then: () => {
+            this.setState({loading: false});
+          }
+        });
+        this.ref_decision = base.syncState(`decisions/${decisionId}`, {
+          context: this,
+          state: 'decision'
+        });
+      })
     }
 
 
@@ -126,7 +126,7 @@ export default class Decision extends React.Component {
       proposals[id] = {
         id: id,
         creator: user.uid,
-        text: "New proposal",
+        text: "New proposal. Click to add details.",
         ts_created: now.getTime()
       }
       this.setState({proposals});
@@ -135,6 +135,12 @@ export default class Decision extends React.Component {
     update_proposal(p) {
       var {proposals} = this.state;
       proposals[p.id] = p;
+      this.setState({proposals});
+    }
+
+    delete_proposal(p) {
+      var {proposals} = this.state;
+      proposals[p.id] = null;
       this.setState({proposals});
     }
 
@@ -178,19 +184,30 @@ export default class Decision extends React.Component {
       return null;
     }
 
-    score_analysis(proposals) {
+    score_analysis() {
       var score_lookup = {}; // p.id -> score
       var top_score = 0;
       var top_proposal;
-      proposals.forEach((p) => {
+      var proposals = [];
+      Object.keys(this.state.proposals).forEach((pid) => {
+        var p = this.state.proposals[pid];
         var score = this.proposal_score(p);
         score_lookup[p.id] = score;
         if (score > top_score) {
           top_score = score;
           top_proposal = p;
         }
+        proposals.push(p);
       });
-      return {top_score, top_proposal, score_lookup};
+      proposals.sort((a, b) => {
+        var a_score = score_lookup[a.id];
+        var b_score = score_lookup[b.id];
+        if (a_score == b_score) return a.toString() - b.toString();
+        else {
+          return b_score - a_score;
+        }
+      });
+      return {top_score, top_proposal, score_lookup, proposals};
     }
 
     handle_title_click() {
@@ -209,16 +226,16 @@ export default class Decision extends React.Component {
       var {decision} = this.state;
       var columns = [];
       if (decision.pros_cons_enabled) columns = [
-        {label: AppConstants.PRO_LABEL},
-        {label: AppConstants.CON_LABEL}
+        {label: AppConstants.PRO_LABEL, icon: <i className="fa fa-plus-circle"/>},
+        {label: AppConstants.CON_LABEL, icon: <i className="fa fa-minus-circle"/>}
       ];
       if (decision.custom_met_enabled && decision.custom_metrics) decision.custom_metrics.forEach((metric) => {
-        columns.push({label: metric, custom: true});
+        columns.push({label: metric, icon: <i className="fa fa-user"/>});
       });
       var col_cls = util.col_class(columns.length);
       var col_cls = col_cls + " text-center";
       return columns.map((col, i) => {
-        var icon = col.custom ? <i className="fa fa-user"/> : null;
+        var icon = col.icon;
         return (<div className={col_cls} key={i}>
           <b>{icon} { col.label }</b>
         </div>);
@@ -233,7 +250,7 @@ export default class Decision extends React.Component {
       ]
       if (editing) {
         return (
-          <Dialog title={editing.prompt} actions={actions} open={true}>
+          <Dialog title={editing.prompt} actions={actions} open={true} onRequestClose={this.cancel_edit.bind(this)}>
             <TextField floatingLabelText={editing.prompt} value={editing.value} onChange={this.changeHandler.bind(this, 'editing', 'value')} fullWidth={true} />
           </Dialog>
         )
@@ -243,18 +260,9 @@ export default class Decision extends React.Component {
 
     render() {
       var _content, _top_proposal, _invite;
-      var {decision, invite_link_showing} = this.state;
-      var proposals = util.flattenDict(this.state.proposals);
-      var {score_lookup, top_score, top_proposal} = this.score_analysis(proposals);
-      if (top_proposal) {
-        _top_proposal = (
-          <div className="top_proposal">
-            <small style={{textTransform: 'uppercase'}}>Top proposal</small>
-            <h2><i className="fa fa-chevron-right"/> { top_proposal.text }</h2>
-            <span className="badge badge-success">{ top_score } pts</span>
-          </div>
-          )
-      }
+      var {decision, invite_link_showing, loading} = this.state;
+      if (loading) return <LoadStatus loading={true} />
+      var {score_lookup, top_score, top_proposal, proposals} = this.score_analysis();
       if (decision) {
         var _metrics_selector;
         if (decision.custom_met_enabled) {
@@ -285,12 +293,13 @@ export default class Decision extends React.Component {
 
           { _invite }
 
-          <div className="row ">
-            <div className="col-sm-8">
-              <p className="lead editable" style={{padding: '10px'}} onClick={this.begin_edit.bind(this, AppConstants.DECISION, null, 'text', "Edit text / details")}><i className="fa fa-pencil show_hover" /> { decision.text || "Not details yet." }</p>
-            </div>
-            <div className="col-sm-4">
-              <div className="settings">
+          <div className="vpad">
+            <div className="row">
+              <div className="col-sm-8">
+                <h2 className="center-upper">Problem / Decision Details</h2>
+                <p className="lead editable" style={{padding: '10px'}} onClick={this.begin_edit.bind(this, AppConstants.DECISION, null, 'text', "Edit text / details")}><i className="fa fa-pencil show_hover" /> { decision.text || "Not details yet." }</p>
+              </div>
+              <div className="col-sm-4 settings">
                 <h2 className="center-upper">Settings</h2>
                 <Toggle label="Pros & Cons" toggled={decision.pros_cons_enabled} onToggle={this.changeHandlerToggle.bind(this, 'decision', 'pros_cons_enabled')} />
                 <Toggle label="Custom Metrics" toggled={decision.custom_met_enabled} onToggle={this.changeHandlerToggle.bind(this, 'decision', 'custom_met_enabled')}/>
@@ -307,22 +316,23 @@ export default class Decision extends React.Component {
             </div>
           </div>
 
-          { proposals.map((p) => {
+          { proposals.length == 0 ? <div className="empty">No proposals yet. Click the plus icon to create the first.</div> : null }
+
+          { proposals.map((p, i) => {
             var score = score_lookup[p.id];
             var top = false;
             if (top_score == score) top = true;
-            return <Proposal proposal={p}
+            return <Proposal key={i} proposal={p}
                       decision={decision} user={this.props.user}
                       score={score} top={top}
                       onProposalUpdate={this.update_proposal.bind(this)}
+                      onProposalDelete={this.delete_proposal.bind(this)}
                       onRequestEdit={this.begin_edit.bind(this)} />
           }) }
 
           <div className="pull-right">
             <FloatingActionButton onClick={this.create_proposal.bind(this)}><FontIcon className="material-icons">add</FontIcon></FloatingActionButton>
           </div>
-
-          { _top_proposal }
 
         </div>
         );
@@ -358,3 +368,5 @@ export default class Decision extends React.Component {
       );
     }
 }
+
+export default withRouter(Decision)

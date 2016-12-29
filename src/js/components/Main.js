@@ -3,7 +3,7 @@ var React = require('react');
 var LoadStatus = require('components/LoadStatus');
 var AppConstants = require('constants/AppConstants');
 var util = require('utils/util');
-var api = require('utils/api');
+var LoadStatus = require('components/LoadStatus');
 var bootbox = require('bootbox');
 import {merge} from 'lodash';
 var DecisionLI = require('components/DecisionLI');
@@ -12,31 +12,15 @@ var Select = require('react-select');
 var mui = require('material-ui'),
   List = mui.List,
   ListItem = mui.ListItem,
-  TextField = mui.TextField,
-  FontIcon = mui.FontIcon,
-  Tabs = mui.Tabs,
-  Tab = mui.Tab,
-  GridTile = mui.GridTile,
-  GridList = mui.GridList,
   FontIcon = mui.FontIcon,
   IconButton = mui.IconButton,
-  DatePicker = mui.DatePicker,
-  Toolbar = mui.Toolbar,
-  ToolbarGroup = mui.ToolbarGroup,
-  ToolbarTitle = mui.ToolbarTitle,
   IconMenu = mui.IconMenu,
   MenuItem = mui.MenuItem,
   RaisedButton = mui.RaisedButton;
 import {changeHandler} from 'utils/component-utils';
 import connectToStores from 'alt-utils/lib/connectToStores';
 
-var Rebase = require('re-base');
-var base = Rebase.createClass({
-      apiKey: "AIzaSyASFn2mDGbmRYbgk36SNJNME5qe8HLLf4w",
-      authDomain: "action-potential.firebaseapp.com",
-      databaseURL: "https://action-potential.firebaseio.com",
-      storageBucket: "action-potential.appspot.com",
-}, 'action-potential-app');
+var base = require('config/base');
 
 @changeHandler
 export default class Main extends React.Component {
@@ -48,9 +32,7 @@ export default class Main extends React.Component {
         super(props);
         this.state = {
           decisions: {},
-          form: {
-          },
-          loading: false
+          loading: true
         };
     }
 
@@ -79,6 +61,9 @@ export default class Main extends React.Component {
         queries: {
           orderByChild: 'creator',
           equalTo: user.uid
+        },
+        then: () => {
+          this.setState({loading: false});
         }
       });
     }
@@ -95,24 +80,26 @@ export default class Main extends React.Component {
         creator: user.uid,
         title: "Unnamed",
         ts_created: now.getTime(),
-        contributors: contributors
+        contributors: contributors,
+        pros_cons_enabled: true
       };
       this.setState({decisions});
     }
 
     render() {
+      var loading = this.state.loading;
       return (
         <div>
 
           <RaisedButton label="New Decision" onClick={this.create_decision.bind(this)} />
+
+          <LoadStatus loading={loading} empty={false} />
 
           <List>
             { util.flattenDict(this.state.decisions).map((d) => {
               return <DecisionLI decision={d} />
             }) }
           </List>
-
-          <ReactTooltip place="top" effect="solid" />
 
         </div>
       );

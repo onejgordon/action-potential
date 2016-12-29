@@ -2,6 +2,7 @@ var React = require('react');
 var AppConstants = require('constants/AppConstants');
 var util = require('utils/util');
 var Select = require('react-select');
+var BarScale = require('components/BarScale');
 
 
 export default class ProposalCustomMetric extends React.Component {
@@ -22,7 +23,7 @@ export default class ProposalCustomMetric extends React.Component {
     get_my_metric_rating() {
         var {user, proposal, metric_index} = this.props;
         if (proposal.custom_metrics && proposal.custom_metrics[metric_index]) {
-            return proposal.custom_metrics[metric_index][user.uid] || null;
+            return proposal.custom_metrics[metric_index][user.uid];
         } else return null;
     }
 
@@ -44,15 +45,18 @@ export default class ProposalCustomMetric extends React.Component {
         return null;
     }
 
-    change_rating(option) {
+    change_rating(value) {
         var {user, proposal, metric_index} = this.props;
         if (user) {
             if (!proposal.custom_metrics) proposal.custom_metrics = {};
             if (!proposal.custom_metrics[metric_index]) proposal.custom_metrics[metric_index] = {};
-            if (option == null) delete proposal.custom_metrics[metric_index][user.uid];
+            if (value == null) delete proposal.custom_metrics[metric_index][user.uid];
             else {
-                var val = option.value;
-                proposal.custom_metrics[metric_index][user.uid] = val;
+                var current_value = proposal.custom_metrics[metric_index][user.uid];
+                if (value == current_value) {
+                    // If clicked same value, remove rating
+                    delete proposal.custom_metrics[metric_index][user.uid];
+                } else proposal.custom_metrics[metric_index][user.uid] = value;
             }
             this.props.onUpdate(proposal);
         }
@@ -62,11 +66,12 @@ export default class ProposalCustomMetric extends React.Component {
         var {metric_index, proposal} = this.props;
         if (!proposal) return <div></div>;
         var my_rating = this.get_my_metric_rating();
-        var team_rating = this.get_metric_average();
+        var average = this.get_metric_average();
         return (
-            <div>
-                <b>Team average:</b> { team_rating == null ? "?" : team_rating.toFixed(2) }<br/>
-                <Select options={AppConstants.METRIC_RATINGS} value={my_rating} onChange={this.change_rating.bind(this)} />
+            <div className="center-block">
+                <BarScale user_value={my_rating}
+                    average={average}
+                    onChange={this.change_rating.bind(this)} />
             </div>
         );
     }

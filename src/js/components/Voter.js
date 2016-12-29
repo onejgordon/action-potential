@@ -42,7 +42,7 @@ export default class Voter extends React.Component {
         var any_votes = votes > 0;
         var st = {};
         if (any_votes && color) st.backgroundColor = color;
-        var _plus_one = <button className={"btn btn-xs " + btn_cls} style={st} onClick={this.toggle_vote.bind(this)}>+{votes}</button>;
+        var _plus_one = <button className={"btn-voter btn btn-xs " + btn_cls} style={st} onClick={this.toggle_vote.bind(this)}>+{votes}</button>;
         return (
             <span>
                 { _plus_one }

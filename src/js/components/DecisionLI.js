@@ -8,15 +8,7 @@ var util = require('utils/util');
 var FetchedList = require('components/FetchedList');
 var api = require('utils/api');
 var bootbox = require('bootbox');
-var mui = require('material-ui'),
-  List = mui.List,
-  ListItem = mui.ListItem,
-  TextField = mui.TextField,
-  FontIcon = mui.FontIcon,
-  Tabs = mui.Tabs,
-  Tab = mui.Tab,
-  RaisedButton = mui.RaisedButton;
-
+import {FontIcon, List, ListItem} from 'material-ui';
 
 class DecisionLI extends React.Component {
     static defaultProps = {}
@@ -47,7 +39,10 @@ class DecisionLI extends React.Component {
     render() {
         var d = this.props.decision;
         return (
-            <ListItem key={d.id || d.title} primaryText={ d.title } onClick={this.goto_decision.bind(this, d)} />
+            <ListItem
+              key={d.id}
+              leftIcon={<FontIcon className="material-icons">lightbulb_outline</FontIcon>}
+              primaryText={ d.title } onClick={this.goto_decision.bind(this, d)} />
         );
     }
 }

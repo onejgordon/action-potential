@@ -5,12 +5,10 @@ var Router = require('react-router');
 import { withRouter } from 'react-router'
 var Link = Router.Link;
 var alt = require('config/alt');
-var UserStore = require('stores/UserStore');
-var UserActions = require('actions/UserActions');
 var AppConstants = require('constants/AppConstants');
 var toastr = require('toastr');
 import {Avatar, IconMenu, MenuItem,
-  FontIcon, RaisedButton} from 'material-ui';
+  FontIcon, RaisedButton, IconButton} from 'material-ui';
 var Gravatar = require('react-gravatar');
 var RouteHandler = Router.RouteHandler;
 import { supplyFluxContext } from 'alt-react'
@@ -59,7 +57,6 @@ class Site extends React.Component {
 
     base.onAuth((user) => {
       console.log("Authenticated...");
-      console.log(user);
       this.setState({user: user});
     })
   }
@@ -90,23 +87,21 @@ class Site extends React.Component {
       var user_string = user.name || user.email || "User";
       var user_letter = user_string[0];
       var _avatar = (
-        <Avatar
-          color={white}
-          backgroundColor={blue400}
-          size={30} style={{cursor:'pointer'}}>{user_letter.toUpperCase()}</Avatar>
+        <IconButton>
+            <Avatar
+              color={white}
+              backgroundColor={blue400}
+              size={30} style={{cursor:'pointer'}}>{user_letter.toUpperCase()}</Avatar>
+        </IconButton>
       );
       _user_section = (
         <div className="userSection col-sm-3 col-sm-offset-6">
-          <div className="userAvatar row">
-            <div className="col-sm-10">
-              <span className="handle">{ user_string }</span>
-            </div>
-            <div className="col-sm-2">
-              <IconMenu iconButtonElement={ _avatar }>
-                <MenuItem onClick={this.home.bind(this)} primaryText="Home" />
-                <MenuItem onClick={this.signout.bind(this)} primaryText="Sign Out" />
-              </IconMenu>
-            </div>
+          <div className="userAvatar">
+            <IconMenu iconButtonElement={ _avatar }>
+              <MenuItem primaryText={user_string} />
+              <MenuItem onClick={this.home.bind(this)} primaryText="Home" />
+              <MenuItem onClick={this.signout.bind(this)} primaryText="Sign Out" />
+            </IconMenu>
           </div>
         </div>
         )
@@ -126,7 +121,7 @@ class Site extends React.Component {
               <header className="topBar row">
                 <div className="siteHeader col-sm-3">
                   <div>
-                    <Link to="/app"><h1 className="siteTitle">{ SITENAME }</h1></Link>
+                    <Link to="/app"><h1 className="siteTitle"><img src="/images/actionpotential_48.png" /> { SITENAME }</h1></Link>
                   </div>
                 </div>
                 { _user_section }

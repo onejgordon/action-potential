@@ -95,10 +95,4 @@ div[data-growl=container].alert {
 
 .btn.btn-primary {
   background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(0,0,0,0.45);
-}
-
-.btn.btn-google {
-  color: white;
-  background: #CC3735;
 }
