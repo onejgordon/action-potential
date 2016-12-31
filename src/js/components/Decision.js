@@ -17,6 +17,7 @@ import {AppBar, List, MenuItem,
     Dialog, FlatButton, TextField,
     Toolbar, ToolbarGroup, ToolbarTitle,
     BottomNavigation, BottomNavigationItem } from 'material-ui';
+var toastr = require('toastr');
 import {changeHandler} from 'utils/component-utils';
 
 var base = require('config/base');
@@ -145,7 +146,9 @@ export default class Decision extends React.Component {
     delete_proposal(p) {
       var {proposals} = this.state;
       proposals[p.id] = null;
-      this.setState({proposals});
+      this.setState({proposals}, () => {
+        toastr.success("Proposal deleted");
+      });
     }
 
     set_decision_prop(prop, value) {
@@ -241,6 +244,7 @@ export default class Decision extends React.Component {
 
           <ul>
             <li>Add proposals</li>
+            <li>Add resource URLs relevant to proposals</li>
             <li>Add and +1 pros/cons</li>
             <li>Define and provide ratings for custom metrics (if enabled)</li>
           </ul>
@@ -278,6 +282,7 @@ export default class Decision extends React.Component {
         return (
           <Dialog title={editing.prompt} actions={actions} open={true} onRequestClose={this.cancel_edit.bind(this)}>
             <TextField
+                autoFocus
                 floatingLabelText={editing.prompt}
                 value={editing.value}
                 multiLine={editing.multiline}
@@ -302,7 +307,12 @@ export default class Decision extends React.Component {
           } catch (e) {
             console.warn(e);
           }
+          var max_metrics = decision.custom_metrics != null && decision.custom_metrics.length >= AppConstants.MAX_CUSTOM_METRICS;
+          var prompt = max_metrics ? "Maximum metrics" : "Enter new metrics name";
           _metrics_selector = <Creatable
+                                noResultsText={prompt}
+                                placeholder="Add metrics..."
+                                addLabelText="Add metric {label}?"
                                 multi={true} options={[]} value={multi_vals}
                                 onChange={this.changeHandlerMultiVal.bind(this, 'decision', 'custom_metrics')}
                                 isValidNewOption={this.valid_new_option.bind(this)} />
@@ -347,7 +357,7 @@ export default class Decision extends React.Component {
             </div>
           </div>
 
-          { proposals.length == 0 ? <div className="empty">No proposals yet. Click the plus icon to create the first.</div> : null }
+          { proposals.length == 0 ? <div className="empty" style={{marginTop: "15px"}}>No proposals yet. Click the plus icon to create the first.</div> : null }
 
           { proposals.map((p, i) => {
             var score = score_lookup[p.id];

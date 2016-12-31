@@ -169,12 +169,17 @@ var util = {
         // Takes ts in ms
         var numeric = _numeric == null ? false : _numeric;
         var with_time = _with_time == null ? true : _with_time;
-        var timezone = _timezone || "UTC";
         if (ts == null) return "";
         // Using moment.js to print local date/times
-        var dt = moment.tz(parseInt(ts), timezone);
-        if (with_time) return dt.format("YYYY-MM-DD H:mm:ss z");
-        else return dt.format("YYYY-MM-DD");
+        const FMT = with_time ? "YYYY-MM-DD H:mm:ss z" : "YYYY-MM-DD";
+        if (_timezone != null) {
+            var timezone = _timezone || "UTC";
+            var dt = moment.tz(parseInt(ts), timezone);
+            return dt.format(FMT);
+        } else {
+            var m = moment(ts);
+            return m.format(FMT);
+        }
     },
 
     timestamp: function() {

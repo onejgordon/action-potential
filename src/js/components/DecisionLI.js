@@ -42,7 +42,9 @@ class DecisionLI extends React.Component {
             <ListItem
               key={d.id}
               leftIcon={<FontIcon className="material-icons">lightbulb_outline</FontIcon>}
-              primaryText={ d.title } onClick={this.goto_decision.bind(this, d)} />
+              primaryText={ d.title }
+              secondaryText={ "Created " + util.printDate(d.ts_created)}
+              onClick={this.goto_decision.bind(this, d)} />
         );
     }
 }

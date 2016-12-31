@@ -36,3 +36,4 @@ An experimental, ultra-lightweight decision app for distributed teams (or anyone
 - Export to gSheet
 - Password protection for decisions
 - Show list of decisions contributed to as well (indexes?)
+- User limit per decision

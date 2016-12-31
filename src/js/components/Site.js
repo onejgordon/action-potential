@@ -76,6 +76,7 @@ class Site extends React.Component {
     var {user} = this.state;
     var SITENAME = AppConstants.SITENAME;
     var _user_section;
+    var header_link = "/app";
     if (user != null) {
       var user_string = user.name || user.email || "User";
       var user_letter = user_string[0];
@@ -107,7 +108,7 @@ class Site extends React.Component {
               <header className="topBar row">
                 <div className="siteHeader col-sm-6">
                   <div>
-                    <Link to="/app"><h1 className="siteTitle"><img src="/images/actionpotential_48.png" /> { SITENAME }</h1></Link>
+                    <Link to={header_link}><h1 className="siteTitle"><img src="/images/actionpotential_48.png" /> { SITENAME }</h1></Link>
                   </div>
                 </div>
                 { _user_section }

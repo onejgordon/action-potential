@@ -158,9 +158,10 @@ a.red:hover {
 }
 
 .btn.btn-voter {
+    background-color: #F1F1F1;
     border: none;
     margin-bottom: 1px;
-    font-size: 9px;
+    font-size: 10px;
 }
 
 /* Decision */
@@ -228,6 +229,7 @@ ul.resources {
 .barScale .bar.user {
     display: inline-block;
     background: #F3B05E;
+    font-weight: bold;
 }
 
 .barScale .bar:hover {
