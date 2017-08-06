@@ -24,8 +24,10 @@ class Join extends React.Component {
     }
 
     componentDidMount() {
+      console.log('mount');
       var {user} = this.props;
-      if (user) this.init();
+      console.log(user);
+      if (user != null) this.init();
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -37,10 +39,12 @@ class Join extends React.Component {
     }
 
     init() {
+      console.log('init')
       var {user} = this.props;
       var {id} = this.props.location.query;
       var data = {};
       data[user.uid] = true;
+      console.log(data);
       base.update(`decisions/${id}/contributors`, {
         data: data,
         then: () => {

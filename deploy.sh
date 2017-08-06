@@ -42,7 +42,7 @@ check_indexes(){
 deploy(){
 	check_indexes
 	check_server_tests
-	check_js_tests
+	# check_js_tests
 	gulp production
 	gcloud config configurations activate $APP
 	if [ "$env" == "staging" ]; then
